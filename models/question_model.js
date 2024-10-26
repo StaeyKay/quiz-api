@@ -8,7 +8,7 @@ const questionSchema = new Schema(
     answer: { type: Number, required: true },
     category: {
       type: String,
-      enum: ["politics", "entertainment", "social studies"],
+      enum: ["politics", "entertainment", "social studies", "integrated science", "english language"],
       required: true,
     },
   },
