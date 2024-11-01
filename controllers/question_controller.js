@@ -22,11 +22,14 @@ export const getAllQuestions = async (req, res) => {
   }
 };
 
-// Endpoint to get questions by their category
+// Endpoint to get questions by their category, displayed in random order
 export const getQuestionsByCategory = async (req, res) => {
   try {
     const { category } = req.params;
-    const questions = await QuestionModel.find({ category }).limit(20);
+    const questions = await QuestionModel.aggregate([
+      { $match: { category } }, // Filter by category
+      { $sample: { size: 20 } }, // Randomly select 20 questions
+    ]);
     res.status(200).json(questions);
   } catch (error) {
     console.log(error.message);
