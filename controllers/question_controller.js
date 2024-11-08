@@ -14,7 +14,21 @@ export const createQuestion = async (req, res) => {
 // Endpoint to get all questions
 export const getAllQuestions = async (req, res) => {
   try {
-    const questions = await QuestionModel.find();
+    // Get query params
+    const { limit, skip, filter, fields } = req.query;
+
+    const queryFilter = filter ? JSON.parse(filter) : {};
+    const selectFields = fields ? JSON.parse(fields) : "";
+
+    if (queryFilter.category) {
+      queryFilter.category = { $regex: queryFilter.category, $options: "i" };
+    }
+
+    const questions = await QuestionModel.find(queryFilter)
+      .select(selectFields)
+      .sort({ createdAt: -1 })
+      .limit(limit)
+      .skip(skip);
     res.status(200).json(questions);
   } catch (error) {
     console.log(error.message);
@@ -31,6 +45,52 @@ export const getQuestionsByCategory = async (req, res) => {
       { $sample: { size: 20 } }, // Randomly select 20 questions
     ]);
     res.status(200).json(questions);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json(error.message);
+  }
+};
+
+// Endpoint to edit a question
+export const editQuestion = async (req, res) => {
+  try {
+    const question = await QuestionModel.findByIdAndUpdate(
+      req.params.id,
+      req.body,
+      { new: true }
+    );
+    if (!question) {
+      return res.status(404).json("Question not found");
+    }
+    // Return response
+    res.status(200).json({
+      message: "The question has been updated successfully",
+      question: question,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// Endpoint to delete a question
+export const deleteQuestion = async (req, res) => {
+  const question = await QuestionModel.findByIdAndDelete(req.params.id);
+  if (!question) {
+    return res.status(404).json("Question not found");
+  }
+
+  res.status(200).json({ message: "Question deleted succeessfully" });
+};
+
+// Endpoint to get a question by id
+export const getQuestionById = async (req, res) => {
+  try {
+    const question = await QuestionModel.findById(req.params.id);
+    if (!question) {
+      return res.status(404).json("Question not found");
+    }
+    res.status(200).json(question);
   } catch (error) {
     console.log(error.message);
     return res.status(500).json(error.message);
