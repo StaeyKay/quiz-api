@@ -6,11 +6,7 @@ const questionSchema = new Schema(
     question: { type: String, required: true },
     options: { type: [String], required: true },
     answer: { type: Number, required: true },
-    category: {
-      type: String,
-      enum: ["politics", "entertainment", "social studies", "integrated science", "english language"],
-      required: true,
-    },
+    category: { type: String, required: true },
   },
   {
     timestamps: true,
