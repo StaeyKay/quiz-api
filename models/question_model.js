@@ -1,5 +1,6 @@
 import { model, Schema, Types } from "mongoose";
 import { toJSON } from "@reis/mongoose-to-json";
+import mongoosePaginate from "mongoose-paginate-v2"
 
 const questionSchema = new Schema(
   {
@@ -14,5 +15,6 @@ const questionSchema = new Schema(
 );
 
 questionSchema.plugin(toJSON);
+questionSchema.plugin(mongoosePaginate);
 
 export const QuestionModel = model("Question", questionSchema);

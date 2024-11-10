@@ -15,20 +15,20 @@ export const createQuestion = async (req, res) => {
 export const getAllQuestions = async (req, res) => {
   try {
     // Get query params
-    const { limit, skip, filter, fields } = req.query;
+    const { limit, page, filter, fields } = req.query;
 
     const queryFilter = filter ? JSON.parse(filter) : {};
-    const selectFields = fields ? JSON.parse(fields) : "";
+    const selectFields = fields ? JSON.parse(fields) : {};
 
     if (queryFilter.category) {
       queryFilter.category = { $regex: queryFilter.category, $options: "i" };
     }
 
-    const questions = await QuestionModel.find(queryFilter)
-      .select(selectFields)
-      .sort({ createdAt: -1 })
-      .limit(limit)
-      .skip(skip);
+    const questions = await QuestionModel.paginate({...queryFilter}, {select: selectFields, sort: { createdAt: -1 }, limit, page })
+      // .select(selectFields)
+      // .sort({ createdAt: -1 })
+      // .limit(limit)
+      // .page(page);
     res.status(200).json(questions);
   } catch (error) {
     console.log(error.message);
@@ -54,11 +54,13 @@ export const getQuestionsByCategory = async (req, res) => {
 // Endpoint to edit a question
 export const editQuestion = async (req, res) => {
   try {
+    console.log("testing edit")
     const question = await QuestionModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
+    console.log("testing edit")
     if (!question) {
       return res.status(404).json("Question not found");
     }
@@ -67,6 +69,7 @@ export const editQuestion = async (req, res) => {
       message: "The question has been updated successfully",
       question: question,
     });
+    console.log("response:", res)
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
@@ -79,7 +82,6 @@ export const deleteQuestion = async (req, res) => {
   if (!question) {
     return res.status(404).json("Question not found");
   }
-
   res.status(200).json({ message: "Question deleted succeessfully" });
 };
 
