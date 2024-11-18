@@ -3,6 +3,7 @@ import {
   createQuestion,
   deleteQuestion,
   editQuestion,
+  filterQuestionsByText,
   getAllQuestions,
   getQuestionById,
   getQuestionsByCategory,
@@ -17,6 +18,8 @@ questionRouter.post("/questions", createQuestion);
 questionRouter.get("/questions", getAllQuestions);
 
 questionRouter.get("/questions/:category", getQuestionsByCategory);
+
+questionRouter.get("/questions/search", filterQuestionsByText);
 
 questionRouter.patch("/questions/:id", editQuestion);
 

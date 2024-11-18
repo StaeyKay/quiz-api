@@ -101,3 +101,23 @@ export const getQuestionById = async (req, res) => {
     return res.status(500).json(error.message);
   }
 };
+
+// Endpoint to filter questions by words in the question text
+export const filterQuestionsByText = async (req, res) => {
+  try {
+    const { filter } = req.query; // Extract query string from request
+    const queryFilter = filter ? JSON.parse(filter) : {};
+    if (!queryFilter) {
+      return res.status(400).json({ message: "Query parameter is required." });
+    }
+
+    const questions = await QuestionModel.find({
+      question: { $regex: queryFilter, $options: "i" }, // Case-insensitive search
+    });
+
+    res.status(200).json(questions);
+  } catch (error) {
+    console.log(error.message);
+    return res.status(500).json({ error: error.message });
+  }
+};
