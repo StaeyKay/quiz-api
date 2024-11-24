@@ -28,10 +28,7 @@ export const getAllQuestions = async (req, res) => {
       { ...queryFilter },
       { select: selectFields, sort: { createdAt: -1 }, limit, page }
     );
-    // .select(selectFields)
-    // .sort({ createdAt: -1 })
-    // .limit(limit)
-    // .page(page);
+
     res.status(200).json(questions);
   } catch (error) {
     console.log(error.message);
@@ -57,13 +54,11 @@ export const getQuestionsByCategory = async (req, res) => {
 // Endpoint to edit a question
 export const editQuestion = async (req, res) => {
   try {
-    console.log("testing edit");
     const question = await QuestionModel.findByIdAndUpdate(
       req.params.id,
       req.body,
       { new: true }
     );
-    console.log("testing edit");
     if (!question) {
       return res.status(404).json("Question not found");
     }
@@ -72,7 +67,6 @@ export const editQuestion = async (req, res) => {
       message: "The question has been updated successfully",
       question: question,
     });
-    console.log("response:", res);
   } catch (error) {
     console.log(error.message);
     return res.status(500).json({ error: error.message });
@@ -107,13 +101,19 @@ export const filterQuestionsByText = async (req, res) => {
   try {
     const { filter } = req.query; // Extract query string from request
     const queryFilter = filter ? JSON.parse(filter) : {};
-    if (!queryFilter) {
-      return res.status(400).json({ message: "Query parameter is required." });
+    if (!queryFilter.question) {
+      return res
+        .status(400)
+        .json({ message: "Query parameter 'question' is required." });
     }
 
     const questions = await QuestionModel.find({
-      question: { $regex: queryFilter, $options: "i" }, // Case-insensitive search
+      question: { $regex: queryFilter.question, $options: "i" }, // Case-insensitive search
     });
+
+    if (!questions) {
+      return res.status(400).json("Question(s) not found");
+    }
 
     res.status(200).json(questions);
   } catch (error) {
