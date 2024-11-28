@@ -18,14 +18,23 @@ export const getAllQuestions = async (req, res) => {
     const { limit, page, filter, fields } = req.query;
 
     const queryFilter = filter ? JSON.parse(filter) : {};
+
     const selectFields = fields ? JSON.parse(fields) : {};
+    const findFilter = { $or: [] };
 
     if (queryFilter.category) {
-      queryFilter.category = { $regex: queryFilter.category, $options: "i" };
+      findFilter.$or.push({
+        category: { $regex: queryFilter.category, $options: "i" },
+      });
+    }
+    if (queryFilter.question) {
+      findFilter.$or.push({
+        question: { $regex: queryFilter.question, $options: "i" },
+      });
     }
 
     const questions = await QuestionModel.paginate(
-      { ...queryFilter },
+      { ...findFilter },
       { select: selectFields, sort: { createdAt: -1 }, limit, page }
     );
 
@@ -106,6 +115,7 @@ export const filterQuestionsByText = async (req, res) => {
         .status(400)
         .json({ message: "Query parameter 'question' is required." });
     }
+    console.log("queryFilter:", queryFilter);
 
     const questions = await QuestionModel.find({
       question: { $regex: queryFilter.question, $options: "i" }, // Case-insensitive search
