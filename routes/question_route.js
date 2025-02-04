@@ -8,6 +8,7 @@ import {
   getQuestionById,
   getQuestionsByCategory,
 } from "../controllers/question_controller.js";
+import { isAuthenticated } from "../middlewares/auth.js";
 
 // Create a router
 export const questionRouter = Router();
@@ -17,7 +18,11 @@ questionRouter.post("/questions", createQuestion);
 
 questionRouter.get("/questions", getAllQuestions);
 
-questionRouter.get("/questions/:category", getQuestionsByCategory);
+questionRouter.get(
+  "/questions/:category",
+
+  getQuestionsByCategory
+);
 
 questionRouter.get("/questions/search", filterQuestionsByText);
 
