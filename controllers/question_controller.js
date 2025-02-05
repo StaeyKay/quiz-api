@@ -53,6 +53,7 @@ export const getQuestionsByCategory = async (req, res) => {
       { $match: { category } }, // Filter by category
       { $sample: { size: 20 } }, // Randomly select 20 questions
     ]);
+
     res.status(200).json(questions);
   } catch (error) {
     console.log(error.message);

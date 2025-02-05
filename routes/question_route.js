@@ -18,11 +18,7 @@ questionRouter.post("/questions", createQuestion);
 
 questionRouter.get("/questions", getAllQuestions);
 
-questionRouter.get(
-  "/questions/:category",
-
-  getQuestionsByCategory
-);
+questionRouter.get("/questions/:category", getQuestionsByCategory);
 
 questionRouter.get("/questions/search", filterQuestionsByText);
 
