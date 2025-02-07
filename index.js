@@ -6,6 +6,7 @@ import MongoStore from "connect-mongo";
 import { dbConnection } from "./config/db.js";
 import { questionRouter } from "./routes/question_route.js";
 import { playerRouter } from "./routes/player_route.js";
+import { scoreRouter } from "./routes/score_route.js";
 
 const app = express();
 
@@ -27,6 +28,7 @@ app.use(
 // Use routes
 app.use("/api/v1", questionRouter);
 app.use("/api/v1", playerRouter);
+app.use("/api/v1", scoreRouter);
 
 // Connect to database
 dbConnection();
