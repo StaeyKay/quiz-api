@@ -25,9 +25,9 @@ export const startSession = async (req, res) => {
 
     return res.status(201).json({
       message: "Game session started successfully",
-      playerId: player.id,
-      sessionID: req.sessionID,
-      session: req.session,
+      // playerId: player.id,
+      // sessionID: req.sessionID,
+      // session: req.session,
       player,
     });
   } catch (error) {
