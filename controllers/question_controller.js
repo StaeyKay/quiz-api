@@ -116,7 +116,6 @@ export const filterQuestionsByText = async (req, res) => {
         .status(400)
         .json({ message: "Query parameter 'question' is required." });
     }
-    console.log("queryFilter:", queryFilter);
 
     const questions = await QuestionModel.find({
       question: { $regex: queryFilter.question, $options: "i" }, // Case-insensitive search

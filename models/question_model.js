@@ -8,6 +8,7 @@ const questionSchema = new Schema(
     options: { type: [String], required: true },
     answer: { type: String, required: true },
     category: { type: String, required: true },
+    playerId: { type: Types.ObjectId, ref: "Player", required: true },
   },
   {
     timestamps: true,
