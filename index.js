@@ -1,5 +1,7 @@
 import express from "express";
 import "dotenv/config";
+import {createServer} from "http";
+import {Server} from "socket.io";
 import mongoose from "mongoose";
 import expressOasGenerator from "@mickeymond/express-oas-generator";
 import session from "express-session";
@@ -11,6 +13,10 @@ import { playerRouter } from "./routes/player_route.js";
 import { scoreRouter } from "./routes/score_route.js";
 
 const app = express();
+const server = createServer(app); // Create an HTTP server
+const io = new Server(server, {
+  cors: {origin: "*"} //Allow CORS for webconnect connections
+});
 
 expressOasGenerator.handleResponses(app, {
   alwaysServeDocs: true,
@@ -41,10 +47,25 @@ app.use("/api/v1", scoreRouter);
 expressOasGenerator.handleRequests();
 app.use((req, res) => res.redirect("/api-docs/"));
 
+let activePlayers = 0;
+
+// Handle websocket connections
+io.on("connection", (socket) => {
+  activePlayers++;
+  console.log("New connection, Active players", activePlayers);
+  io.emit("Active players:", activePlayers);
+
+  socket.on("disconnect", () => {
+    activePlayers = Math.max(0, activePlayers - 1); //Endure it doesn't go negative
+    console.log("Player disconnected, Active players:", activePlayers);
+    io.emit("Active players:", activePlayers)
+  });
+});
+
 // Connect to database
 dbConnection();
 
 const PORT = process.env.PORT || 5050;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`App is listening on port ${PORT}`);
 });
