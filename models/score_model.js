@@ -5,7 +5,8 @@ import { toJSON } from "@reis/mongoose-to-json";
 const scoreSchema = new Schema (
     {
         score: {type: Number},
-        playerId: {type: Types.ObjectId, ref: 'Player', required: true}
+        playerId: {type: Types.ObjectId, ref: 'Player', required: true},
+        category: {type: String}
     },
     {
         timestamps: true
